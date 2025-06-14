@@ -32,7 +32,7 @@ Real-time newsfeed system that aggregates IT-related news items from selected pu
 The project is organized into a clear directory structure to separate core components, tests, and documentation:
 
 ```
-nexthink-it-newsfeed/
+real-time-it-news/
 ├── app/
 │   ├── __init__.py           # Package initialization
 │   ├── ingestion.py          # Handles ingestion from Reddit and RSS sources
