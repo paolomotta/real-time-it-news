@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -10,8 +10,9 @@ class NewsItem(BaseModel):
     published_at: datetime = Field(..., description="UTC timestamp of when the news item was published")
     relevance_score: Optional[float] = Field(default=None, exclude=True)
 
-    class ConfigDict:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        extra="forbid", # Forbid extra fields not defined in the model
+        json_schema_extra={
             "example": {
                 "id": "reddit-abc123",
                 "source": "reddit",
@@ -20,3 +21,4 @@ class NewsItem(BaseModel):
                 "published_at": "2025-06-14T09:00:00Z"
             }
         }
+    )
