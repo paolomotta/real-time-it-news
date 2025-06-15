@@ -8,6 +8,8 @@ import yaml
 from dotenv import load_dotenv
 from pathlib import Path
 
+logger = logging.getLogger(__name__)
+
 # Load credentials from .env file (if available)
 load_dotenv()
 
@@ -16,13 +18,13 @@ def load_rss_feeds_from_config(config_path: str = "feeds.yaml") -> Dict[str, str
     try:
         path = Path(config_path)
         if not path.exists():
-            logging.warning(f"Config file {config_path} not found.")
+            logger.warning(f"Config file {config_path} not found.")
             return {}
         with path.open("r") as f:
             config = yaml.safe_load(f)
             return config.get("rss_feeds", {})
     except Exception as e:
-        logging.error(f"Error loading feed config: {e}")
+        logger.error(f"Error loading feed config: {e}")
         return {}
 
 
@@ -30,13 +32,13 @@ def load_reddit_subreddits_from_config(config_path: str = "feeds.yaml") -> list[
     try:
         path = Path(config_path)
         if not path.exists():
-            logging.warning(f"Config file {config_path} not found.")
+            logger.warning(f"Config file {config_path} not found.")
             return []
         with path.open("r") as f:
             config = yaml.safe_load(f)
             return config.get("reddit_subreddits", [])
     except Exception as e:
-        logging.error(f"Error loading subreddit config: {e}")
+        logger.error(f"Error loading subreddit config: {e}")
         return []
 
 
@@ -86,7 +88,7 @@ def fetch_reddit_posts(subreddits: list[str] = None, limit: int = 5) -> List[Dic
                     "published_at": datetime.utcfromtimestamp(submission.created_utc).isoformat()
                 })
     except Exception as e:
-        logging.error(f"Error fetching Reddit posts: {e}")
+        logger.error(f"Error fetching Reddit posts: {e}")
     return posts
 
 
@@ -116,7 +118,7 @@ def fetch_rss_news(limit_per_feed: int = 5, feeds: dict[str, str] | None = None)
                     "published_at": published_at
                 })
         except Exception as e:
-            logging.error(f"Error fetching from {source_name}: {e}")
+            logger.error(f"Error fetching from {source_name}: {e}")
     return items
 
 

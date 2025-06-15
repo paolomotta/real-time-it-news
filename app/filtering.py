@@ -1,5 +1,8 @@
 import re
+import logging
 from app.models import NewsItem
+
+logger = logging.getLogger(__name__)
 
 # TODO: Using an LLM for semantic understanding would be ideal
 
@@ -45,16 +48,20 @@ def compute_relevance_score(item: NewsItem) -> float:
     # Score keyword matches
     for keyword, weight in KEYWORD_SCORES.items():
         if keyword in content:
+            logger.debug(f"Keyword '{keyword}' matched in item '{item.id}' (+{weight})")
             score += weight
 
     # Apply bonus points for regex pattern matches
     for pattern, bonus in PATTERN_BONUSES:
         if re.search(pattern, content, flags=re.IGNORECASE):
+            logger.debug(f"Pattern '{pattern}' matched in item '{item.id}' (+{bonus})")
             score += bonus
 
     # Adjust based on source weight
     source_weight = SOURCE_WEIGHTS.get(item.source.lower(), 1.0)
-    return score * source_weight
+    final_score = score * source_weight
+    logger.debug(f"Item '{item.id}' base score: {score}, source weight: {source_weight}, final score: {final_score}")
+    return final_score
 
 
 def is_relevant(item: NewsItem, threshold: float = 2.0) -> bool:
@@ -62,4 +69,6 @@ def is_relevant(item: NewsItem, threshold: float = 2.0) -> bool:
     Return True if the item is considered relevant based on a score threshold.
     """
     score = compute_relevance_score(item)
+    relevant = score >= threshold
+    logger.info(f"Item '{item.id}' relevance: {score} (threshold: {threshold}) -> {'relevant' if relevant else 'not relevant'}")
     return score >= threshold

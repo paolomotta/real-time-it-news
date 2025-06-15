@@ -1,4 +1,7 @@
+import logging
 from app.models import NewsItem
+
+logger = logging.getLogger(__name__)
 
 def sort_news_items(items: list[NewsItem]) -> list[NewsItem]:
     """
@@ -7,6 +10,7 @@ def sort_news_items(items: list[NewsItem]) -> list[NewsItem]:
     2. Descending published_at timestamp
     3. Lexicographical ID order (tie-breaker)
     """
+    logger.debug(f"Sorting {len(items)} news items by relevance and recency.")
     return sorted(
         items,
         key=lambda item: (

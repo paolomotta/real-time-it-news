@@ -1,9 +1,14 @@
+import logging
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-
 from apscheduler.schedulers.background import BackgroundScheduler
+
+# Logging configuration
+from app.logging_config import configure_logging
+configure_logging()
+logger = logging.getLogger(__name__)
 
 from app.models import NewsItem
 from app.filtering import is_relevant, compute_relevance_score
@@ -22,16 +27,16 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # === Continuous Fetch Job ===
 def scheduled_fetch():
-    print("🔄 [Scheduled] Fetching and ingesting news...")
+    logger.info("🔄 [Scheduled] Fetching and ingesting news...")
     raw_items = fetch_all_sources()
 
-    # ✅ Convert dicts to NewsItem models
+    # Convert dicts to NewsItem models
     typed_items = []
     for raw in raw_items:
         try:
             typed_items.append(NewsItem(**raw))
         except Exception as e:
-            print(f"⚠️ Skipped invalid item: {e}")
+            logger.info(f"⚠️ Skipped invalid item: {e}")
 
     relevant = []
     for item in typed_items:
@@ -40,7 +45,7 @@ def scheduled_fetch():
             relevant.append(item)
 
     storage.add_many(relevant)
-    print(f"✅ [Scheduled] Ingested {len(relevant)} items")
+    logger.info(f"✅ [Scheduled] Ingested {len(relevant)} items")
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(scheduled_fetch, "interval", minutes=1)
