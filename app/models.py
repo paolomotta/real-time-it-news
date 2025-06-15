@@ -11,7 +11,7 @@ class NewsItem(BaseModel):
     relevance_score: Optional[float] = Field(default=None, exclude=True)
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": "reddit-abc123",
                 "source": "reddit",
