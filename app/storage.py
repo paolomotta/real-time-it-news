@@ -59,7 +59,7 @@ class NewsStorage:
     def save_to_file(self) -> None:
         try:
             with self._file.open("w") as f:
-                json.dump([item.dict() for item in self._store.values()], f, default=str, indent=2)
+                json.dump([item.model_dump() for item in self._store.values()], f, default=str, indent=2)
                 logger.debug(f"Saved {len(self._store)} news items to {self._file}.")
         except Exception as e:
             logger.error(f"Error saving storage file: {e}")
