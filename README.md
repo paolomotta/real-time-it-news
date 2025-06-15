@@ -26,6 +26,38 @@ Real-time newsfeed system that aggregates IT-related news items from selected pu
     pip install -r requirements.txt
     ```
 
+4. **Configure Reddit API Access** 
+
+    To fetch news from Reddit, you need Reddit API credentials. Follow these steps:
+    - Go to https://www.reddit.com/prefs/apps
+    - Scroll down and click **“Create App”** or **“Create Another App”**
+    - Fill in the form:
+        - **Name**: `real-time-it-news`
+        - **App Type**: `script`
+        - **Redirect URI**: `http://localhost:8080`
+    - After creating the app, you will receive:
+        - `client_id` (under the app name)
+        - `client_secret` (called secret)
+
+
+5. **Set up environment variables**
+
+    - Copy the example environment file to create your own configuration:
+      ```bash
+      cp .env.example .env
+      ```
+    - Open the newly created `.env` file and fill in your Reddit API credentials:
+      ```env
+      REDDIT_CLIENT_ID=your_client_id_here
+      REDDIT_CLIENT_SECRET=your_client_secret_here
+      REDDIT_USER_AGENT=real-time-it-news by u/your_reddit_username
+      ```
+    - Save the file. The application will automatically load these variables at runtime.
+
+6. **Configure the RSS Feeds**
+
+    The application uses a YAML file to specify which RSS feeds to aggregate.
+    Open `feeds.yaml` in a text editor and add or modify the RSS feeds you want to include.
 
 ## Project Structure
 

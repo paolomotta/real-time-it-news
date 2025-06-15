@@ -1,0 +1,8 @@
+reddit_subreddits:
+  - netsec
+  - cybersecurity
+  # Add more subreddits as needed
+rss_feeds:
+  tomshardware: https://www.tomshardware.com/feeds/all
+  arstechnica: http://feeds.arstechnica.com/arstechnica/index
+  # Add more RSS feeds as needed
