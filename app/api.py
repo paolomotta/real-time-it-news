@@ -33,3 +33,8 @@ def retrieve_items():
     """
     all_items = storage.get_all()
     return sort_news_items(all_items)
+
+@app.post("/reset")
+def reset_storage():
+    storage.clear()
+    return {"status": "cleared"}
