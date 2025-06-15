@@ -8,6 +8,7 @@ class NewsItem(BaseModel):
     title: str = Field(..., description="Title or headline of the news article")
     body: Optional[str] = Field(default="", description="Optional body or summary of the news article")
     published_at: datetime = Field(..., description="UTC timestamp of when the news item was published")
+    relevance_score: Optional[float] = Field(default=None, exclude=True)
 
     class Config:
         schema_extra = {
