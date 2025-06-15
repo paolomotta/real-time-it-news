@@ -14,13 +14,13 @@ FAKE_RSS_FEED = {
 @patch("app.ingestion.yaml.safe_load", return_value=FAKE_RSS_FEED)
 @patch("pathlib.Path.exists", return_value=True)
 def test_load_rss_feeds_from_config(mock_exists, mock_yaml):
-    feeds = ingestion.load_rss_feeds_from_config("feeds.yaml")
+    feeds = ingestion.load_rss_feeds_from_config()
     assert "mocksource" in feeds
 
 @patch("app.ingestion.yaml.safe_load", return_value=FAKE_RSS_FEED)
 @patch("pathlib.Path.exists", return_value=True)
 def test_load_reddit_subreddits_from_config(mock_exists, mock_yaml):
-    subreddits = ingestion.load_reddit_subreddits_from_config("feeds.yaml")
+    subreddits = ingestion.load_reddit_subreddits_from_config()
     assert "netsec" in subreddits
 
 @patch("app.ingestion.os.getenv", return_value=None)
