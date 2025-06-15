@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔐 IT Security News Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="container" style="max-width: 720px; margin: 2rem auto;">
+    <header style="text-align: center; margin-bottom: 2rem;">
+      <h1>🔐 IT Security News Dashboard</h1>
+      <p style="color: #6b7280;">Stay informed with the most relevant cybersecurity headlines</p>
+    </header>
+
+    <div id="news">
+      <p>Loading news items...</p>
+    </div>
+  </div>
+
+  <script>
+    async function loadNews() {
+      const res = await fetch("/retrieve");
+      const items = await res.json();
+      const container = document.getElementById("news");
+      container.innerHTML = "";
+
+      if (items.length === 0) {
+        container.innerHTML = "<p>No news items found.</p>";
+        return;
+      }
+
+      items.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "news-item";
+        div.innerHTML = `
+          <h2 class="news-title">${item.title}</h2>
+          <p class="news-meta">${item.source} | ${new Date(item.published_at).toLocaleString()}</p>
+          <p>${item.body || ""}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    window.onload = loadNews;
+  </script>
+</body>
+</html>
+

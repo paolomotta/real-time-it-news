@@ -1,4 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+
 from app.models import NewsItem
 from app.filtering import is_relevant, compute_relevance_score
 from app.storage import NewsStorage
@@ -8,6 +12,10 @@ app = FastAPI(title="Mock IT Newsfeed API")
 
 # Initialize storage
 storage = NewsStorage()
+
+# Mount templates and static directories
+templates = Jinja2Templates(directory="app/templates")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.post("/ingest", status_code=200)
 def ingest_items(items: list[NewsItem]):
@@ -38,3 +46,10 @@ def retrieve_items():
 def reset_storage():
     storage.clear()
     return {"status": "cleared"}
+
+@app.get("/", response_class=HTMLResponse)
+def show_dashboard(request: Request):
+    """
+    Serves the web dashboard page.
+    """
+    return templates.TemplateResponse("dashboard.html", {"request": request})

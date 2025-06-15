@@ -1,0 +1,29 @@
+/* style.css - Custom dashboard overrides */
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+h1 {
+  color: #2563eb;
+}
+
+.news-item {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.news-meta {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.news-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
