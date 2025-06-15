@@ -10,7 +10,7 @@ class NewsItem(BaseModel):
     published_at: datetime = Field(..., description="UTC timestamp of when the news item was published")
     relevance_score: Optional[float] = Field(default=None, exclude=True)
 
-    class Config:
+    class ConfigDict:
         json_schema_extra = {
             "example": {
                 "id": "reddit-abc123",
