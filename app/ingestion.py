@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 
-def load_rss_feeds_from_config(config_path: str = "feeds.yaml") -> Dict[str, str]:
+def load_rss_feeds_from_config(config_path: str = "config/feeds.yaml") -> Dict[str, str]:
     try:
         path = Path(config_path)
         if not path.exists():
@@ -28,7 +28,7 @@ def load_rss_feeds_from_config(config_path: str = "feeds.yaml") -> Dict[str, str
         return {}
 
 
-def load_reddit_subreddits_from_config(config_path: str = "feeds.yaml") -> list[str]:
+def load_reddit_subreddits_from_config(config_path: str = "config/feeds.yaml") -> list[str]:
     try:
         path = Path(config_path)
         if not path.exists():

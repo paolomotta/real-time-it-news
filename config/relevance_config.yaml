@@ -1,0 +1,28 @@
+keyword_scores:
+  ransomware: 5
+  breach: 4
+  CVE: 3
+  critical vulnerability: 5
+  exploit: 3
+  ddos: 4
+  leak: 3
+  zero-day: 5
+  patch: 2
+  mitigation: 2
+  outage: 3
+
+pattern_bonuses:
+  - pattern: CVE-\d{4}-\d+
+    bonus: 3
+  - pattern: \bAWS\b.*\boutage\b
+    bonus: 2
+  - pattern: \bGoogle\b.*\bbreach\b
+    bonus: 2
+  - pattern: \bexploit\s+released\b
+    bonus: 3
+
+source_weights:
+  reddit: 1.0
+  arstechnica: 1.2
+  tomshardware: 1.1
+  mock: 1.0

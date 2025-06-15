@@ -1,41 +1,23 @@
 import re
 import logging
+import yaml
 from app.models import NewsItem
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 # TODO: Using an LLM for semantic understanding would be ideal
 
-# Weighted keywords indicating relevance
-KEYWORD_SCORES = {
-    "ransomware": 5,
-    "breach": 4,
-    "CVE": 3,
-    "critical vulnerability": 5,
-    "exploit": 3,
-    "ddos": 4,
-    "leak": 3,
-    "zero-day": 5,
-    "patch": 2,
-    "mitigation": 2,
-    "outage": 3
-}
 
-# Regex patterns for boosting scores based on structure
-PATTERN_BONUSES = [
-    (r"CVE-\d{4}-\d+", 3),            # CVE references
-    (r"\bAWS\b.*\boutage\b", 2),      # AWS outage
-    (r"\bGoogle\b.*\bbreach\b", 2),   # Org + incident
-    (r"\bexploit\s+released\b", 3)    # Escalating threats
-]
+def load_relevance_config(config_path="config/relevance_config.yaml"):
+    with open(config_path, "r") as f:
+        config = yaml.safe_load(f)
+    return config
 
-# Optional: weight based on source reliability
-SOURCE_WEIGHTS = {
-    "reddit": 1.0,
-    "arstechnica": 1.2,
-    "tomshardware": 1.1,
-    "mock": 1.0
-}
+_config = load_relevance_config()
+KEYWORD_SCORES = _config["keyword_scores"] # Weighted keywords indicating relevance
+PATTERN_BONUSES = [(entry["pattern"], entry["bonus"]) for entry in _config["pattern_bonuses"]] # Regex patterns for boosting scores based on structure
+SOURCE_WEIGHTS = _config["source_weights"] # Optional: weight based on source reliability
 
 
 def compute_relevance_score(item: NewsItem) -> float:
