@@ -70,5 +70,5 @@ def is_relevant(item: NewsItem, threshold: float = 2.0) -> bool:
     """
     score = compute_relevance_score(item)
     relevant = score >= threshold
-    logger.info(f"Item '{item.id}' relevance: {score} (threshold: {threshold}) -> {'relevant' if relevant else 'not relevant'}")
+    logger.debug(f"Item '{item.id}' relevance: {score} (threshold: {threshold}) -> {'relevant' if relevant else 'not relevant'}")
     return score >= threshold
