@@ -60,7 +60,7 @@ def ingest_items(items: list[NewsItem]):
     Accepts a list of news items, filters them, and stores only the relevant ones.
     """
     if not items:
-        raise HTTPException(status_code=400, detail="No items provided.")
+        return {"message": "No items provided, nothing to ingest.", "accepted": 0, "total": 0}
 
     relevant = []
     for item in items:
