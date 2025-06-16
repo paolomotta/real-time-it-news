@@ -31,20 +31,25 @@ def compute_relevance_score(item: NewsItem) -> float:
     content = f"{item.title} {item.body or ''}".lower()
     score = 0
 
+    # Handle missing config gracefully
+    keyword_scores = KEYWORD_SCORES if KEYWORD_SCORES is not None else {}
+    pattern_bonuses = PATTERN_BONUSES if PATTERN_BONUSES is not None else []
+    source_weights = SOURCE_WEIGHTS if SOURCE_WEIGHTS is not None else {}
+
     # Score keyword matches
-    for keyword, weight in KEYWORD_SCORES.items():
+    for keyword, weight in keyword_scores.items():
         if keyword in content:
             logger.debug(f"Keyword '{keyword}' matched in item '{item.id}' (+{weight})")
             score += weight
 
     # Apply bonus points for regex pattern matches
-    for pattern, bonus in PATTERN_BONUSES:
+    for pattern, bonus in pattern_bonuses:
         if re.search(pattern, content, flags=re.IGNORECASE):
             logger.debug(f"Pattern '{pattern}' matched in item '{item.id}' (+{bonus})")
             score += bonus
 
     # Adjust based on source weight
-    source_weight = SOURCE_WEIGHTS.get(item.source.lower(), 1.0)
+    source_weight = source_weights.get(item.source.lower(), 1.0)
     final_score = score * source_weight
     logger.debug(f"Item '{item.id}' base score: {score}, source weight: {source_weight}, final score: {final_score}")
     return final_score
