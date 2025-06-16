@@ -20,7 +20,7 @@ Aggregates and filters cybersecurity and IT-related news from Reddit and public 
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/real-time-it-news.git
+   git clone https://github.com/paolomotta/real-time-it-news.git
    cd real-time-it-news
    ```
 
@@ -40,18 +40,37 @@ Aggregates and filters cybersecurity and IT-related news from Reddit and public 
     pip install -r requirements.txt
     ```
 
-4. **Configure Reddit API Access** 
+4. **Configure Reddit API Access**
 
-    To fetch news from Reddit, you need Reddit API credentials. Follow these steps:
-    - Go to https://www.reddit.com/prefs/apps
-    - Scroll down and click **“Create App”** or **“Create Another App”**
-    - Fill in the form:
-        - **Name**: `real-time-it-news`
-        - **App Type**: `script`
-        - **Redirect URI**: `http://localhost:8080`
-    - After creating the app, you will receive:
-        - `client_id` (under the app name)
-        - `client_secret` (called secret)
+    To fetch news from Reddit, the system requires Reddit API credentials. If you haven’t already:
+
+    #### 🧾 Create a Reddit Account
+    - Sign up at [https://www.reddit.com/register](https://www.reddit.com/register)
+
+    #### ⚙️ Register a Reddit Developer App
+    Once logged in:
+
+    1. Visit the Reddit developer dashboard:  
+      👉 [https://www.reddit.com/prefs/apps](https://www.reddit.com/prefs/apps)
+
+    2. If you haven’t created any apps yet, click the `“Are you a developer? Create an app...”` button at the top left of the page.  
+      If you already have apps, scroll to the bottom and click `“Create another app...”`.
+
+    3. Fill out the form:
+      - **Name**: `real-time-it-news` (or any descriptive name)
+      - **App Type**: Select **script**
+      - **Description**: _(optional)_
+      - **Redirect URI**: `http://localhost:8080` (required, even if unused)
+
+    4. Click `Create app`
+
+    After submitting, you will be provided with:
+    - **Client ID** → displayed just below your app name
+    - **Client Secret** → labeled as “secret”
+    - **User Agent** → a string identifying your app (e.g., `real-time-it-news by u/your_reddit_username`)
+
+    You’ll need to add these to your `.env` file in the next step.
+
 
 
 5. **Set up environment variables**
@@ -104,14 +123,19 @@ source_weights:
 
 ## 🏁 Running the Application
 
+You can start the application **either from the command line** (locally) **or using Docker**.
+
+
+### 🖥️ Option 1: Run Locally
+
 Start the FastAPI server with:
 
 ```bash
 uvicorn app.api:app --reload
 ```
 
-
-## 📦 Docker Support
+The API will be available at http://localhost:8000.
+### 🐳 Option 2: Run with Docker
 
 **Build the image:**
 ```bash
@@ -128,7 +152,25 @@ Or use **Docker Compose**:
 docker-compose up --build
 ```
 
-⚠️ Ensure Docker is installed and your user has permission to access the Docker daemon (e.g., add your user to the docker group).
+The API will be available at http://localhost:8000.
+
+⚠️ Ensure Docker is installed and [your user has permission to access the Docker daemon](https://stackoverflow.com/questions/48957195/how-to-fix-docker-permission-denied) (e.g., add your user to the docker group).
+
+
+### 🐳 Installing Docker (if needed)
+
+If you don’t have Docker installed, follow the official instructions for your operating system:
+
+- [Get Docker for Windows, Mac, or Linux](https://docs.docker.com/get-docker/)
+
+After installation, you can verify from terminal that Docker is working by running:
+
+```bash
+docker --version
+```
+
+If you want to use Docker Compose, you may also need to install it separately. See [Install Docker Compose](https://docs.docker.com/compose/install/) for details.
+
 
 
 ## 🧪 Testing
@@ -153,7 +195,7 @@ Test coverage includes:
 
 - Ingestion integration (ingestion.py)
 
-## Project Structure
+## 🗂️ Project Structure
 
 The project is organized into a clear directory structure to separate core components, tests, and documentation:
 
