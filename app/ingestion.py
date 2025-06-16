@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 from typing import List, Dict
 import feedparser
@@ -7,6 +7,7 @@ import praw
 import yaml
 from dotenv import load_dotenv
 from pathlib import Path
+from feedfinder2 import find_feeds
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ def load_rss_feeds_from_config(config_path: str = "config/feeds.yaml") -> Dict[s
             return {}
         with path.open("r") as f:
             config = yaml.safe_load(f)
-            return config.get("rss_feeds", {})
+            return config.get("websites", {})
     except Exception as e:
         logger.error(f"Error loading feed config: {e}")
         return {}
@@ -62,7 +63,7 @@ reddit = praw.Reddit(
 )
 
 
-def fetch_reddit_posts(subreddits: list[str] = None, limit: int = 5) -> List[Dict]:
+def fetch_reddit_posts(subreddits: list[str] = None, limit: int = 10) -> List[Dict]:
     """
     Fetch top posts from one or more subreddits.
     Args:
@@ -85,40 +86,51 @@ def fetch_reddit_posts(subreddits: list[str] = None, limit: int = 5) -> List[Dic
                     "source": f"reddit/{subreddit}",
                     "title": submission.title,
                     "body": submission.selftext or "",
-                    "published_at": datetime.utcfromtimestamp(submission.created_utc).isoformat()
+                    "published_at": datetime.fromtimestamp(submission.created_utc, tz=timezone.utc).isoformat()
                 })
     except Exception as e:
         logger.error(f"Error fetching Reddit posts: {e}")
     return posts
 
 
-def fetch_rss_news(limit_per_feed: int = 5, feeds: dict[str, str] | None = None) -> List[Dict]:
+def fetch_rss_news(limit_per_feed: int = 10, feeds: dict[str, str] | None = None) -> List[Dict]:
     """
-    Fetch recent entries from multiple RSS feeds.
-    Args:
-        limit_per_feed (int): The maximum number of entries to fetch from each feed.
-    Returns:
-        List[Dict]: A list of dictionaries containing news items from RSS feeds.
+    Fetch recent entries from multiple RSS feeds. If a feed value is a homepage URL, try to auto-discover the RSS feed.
     """
     feeds = feeds or load_rss_feeds_from_config()
     items = []
-    for source_name, feed_url in feeds.items():
+
+    for source_name, url in feeds.items():
         try:
-            d = feedparser.parse(feed_url)
-            for entry in d.entries[:limit_per_feed]:
-                published = entry.get("published_parsed")
-                published_at = (
-                    datetime(*published[:6]).isoformat() if published else datetime.utcnow().isoformat()
-                )
-                items.append({
-                    "id": f"{source_name}-{entry.get('id', entry.get('link'))}",
-                    "source": source_name,
-                    "title": entry.title,
-                    "body": entry.get("summary", ""),
-                    "published_at": published_at
-                })
+            # Discover feed URLs if not an RSS URL
+            feed_urls = [url]
+            if not url.endswith(".xml") and "feed" not in url:
+                discovered = find_feeds(url)
+                if discovered:
+                    logger.debug(f"Discovered RSS feed(s) for {source_name}: {discovered}")
+                    feed_urls = discovered
+                else:
+                    logger.warning(f"No RSS feeds found for {source_name} at {url}")
+                    continue
+
+            for feed_url in feed_urls:
+                d = feedparser.parse(feed_url)
+                for entry in d.entries[:limit_per_feed]:
+                    published = entry.get("published_parsed")
+                    published_at = (
+                        datetime(*published[:6]).isoformat() if published else datetime.now(datetime.timezone.utc).isoformat()
+                    )
+                    items.append({
+                        "id": f"{source_name}-{entry.get('id', entry.get('link'))}",
+                        "source": source_name,
+                        "title": entry.title,
+                        "body": entry.get("summary", ""),
+                        "published_at": published_at
+                    })
+
         except Exception as e:
-            logger.error(f"Error fetching from {source_name}: {e}")
+            logger.error(f"Error fetching from {source_name} ({url}): {e}")
+
     return items
 
 
