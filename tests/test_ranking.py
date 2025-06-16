@@ -1,11 +1,11 @@
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.models import NewsItem
 from app.ranking import sort_news_items
 
 @pytest.fixture
 def unsorted_news_items():
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     return [
         NewsItem(id="b", title="Item B", source="test", published_at=now - timedelta(minutes=2), relevance_score=5.0),
         NewsItem(id="a", title="Item A", source="test", published_at=now - timedelta(minutes=1), relevance_score=5.0),
@@ -23,7 +23,7 @@ def test_sort_news_items_by_relevance_and_recency(unsorted_news_items):
     assert ids == ["a", "b", "c", "d"]
 
 def test_sort_with_equal_scores_and_dates():
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     items = [
         NewsItem(id="z", title="Z", source="test", published_at=now, relevance_score=2.0),
         NewsItem(id="x", title="X", source="test", published_at=now, relevance_score=2.0),
