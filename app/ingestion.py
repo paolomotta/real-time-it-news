@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 
-def load_rss_feeds_from_config(config_path: str = "config/feeds.yaml") -> Dict[str, str]:
+def load_websites_from_config(config_path: str = "config/feeds.yaml") -> Dict[str, str]:
     try:
         path = Path(config_path)
         if not path.exists():
@@ -102,7 +102,7 @@ def fetch_rss_news(limit_per_feed: int = 10, feeds: dict[str, str] | None = None
     Returns:
         List[Dict]: A list of dictionaries containing feed items.
     """
-    feeds = feeds or load_rss_feeds_from_config()
+    feeds = feeds or load_websites_from_config()
     items = []
 
     for source_name, url in feeds.items():

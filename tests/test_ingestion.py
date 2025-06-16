@@ -3,19 +3,20 @@ import time
 from unittest.mock import patch, MagicMock
 from app import ingestion
 
-# Sample RSS feed structure
+# Sample config structure matching the new ingestion.py
 FAKE_RSS_FEED = {
-    "rss_feeds": {
-        "mocksource": "http://mocksource.com/rss"
+    "websites": {
+        "mocksource": "http://mocksource.com"
     },
     "reddit_subreddits": ["netsec"]
 }
 
 @patch("app.ingestion.yaml.safe_load", return_value=FAKE_RSS_FEED)
 @patch("pathlib.Path.exists", return_value=True)
-def test_load_rss_feeds_from_config(mock_exists, mock_yaml):
-    feeds = ingestion.load_rss_feeds_from_config()
+def test_websites_from_config(mock_exists, mock_yaml):
+    feeds = ingestion.load_websites_from_config()
     assert "mocksource" in feeds
+    assert feeds["mocksource"] == "http://mocksource.com"
 
 @patch("app.ingestion.yaml.safe_load", return_value=FAKE_RSS_FEED)
 @patch("pathlib.Path.exists", return_value=True)
@@ -30,8 +31,9 @@ def test_get_env_or_prompt_fallback(mock_input, mock_getenv):
     assert val == "dummy_value"
 
 @patch("app.ingestion.feedparser.parse")
-@patch("app.ingestion.load_rss_feeds_from_config", return_value={"mocksource": "http://rss.test"})
-def test_fetch_rss_news(mock_load_config, mock_feedparser):
+@patch("app.ingestion.find_feeds", return_value=["http://rss.test/feed.xml"])
+@patch("app.ingestion.load_websites_from_config", return_value={"mocksource": "http://rss.test"})
+def test_fetch_rss_news(mock_load_config, mock_find_feeds, mock_feedparser):
     published_time = time.struct_time((2025, 6, 15, 12, 0, 0, 0, 0, 0))
 
     mock_entry = MagicMock()
