@@ -96,6 +96,11 @@ def fetch_reddit_posts(subreddits: list[str] = None, limit: int = 10) -> List[Di
 def fetch_rss_news(limit_per_feed: int = 10, feeds: dict[str, str] | None = None) -> List[Dict]:
     """
     Fetch recent entries from multiple RSS feeds. If a feed value is a homepage URL, try to auto-discover the RSS feed.
+    Args:
+        limit_per_feed (int): Maximum number of items to fetch from each feed.
+        feeds (dict[str, str]): Dictionary of feed names and URLs. If None, loads from config.
+    Returns:
+        List[Dict]: A list of dictionaries containing feed items.
     """
     feeds = feeds or load_rss_feeds_from_config()
     items = []

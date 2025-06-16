@@ -23,6 +23,11 @@ SOURCE_WEIGHTS = _config["source_weights"] # Optional: weight based on source re
 def compute_relevance_score(item: NewsItem) -> float:
     """
     Calculate a weighted relevance score for a news item based on content and source.
+    The score is based on keyword matches, regex patterns, and source reliability.
+    Args:
+        item (NewsItem): The news item to evaluate.
+    Returns:
+        float: The computed relevance score.
     """
     content = f"{item.title} {item.body or ''}".lower()
     score = 0
@@ -49,6 +54,11 @@ def compute_relevance_score(item: NewsItem) -> float:
 def is_relevant(item: NewsItem, threshold: float = 2.0) -> bool:
     """
     Return True if the item is considered relevant based on a score threshold.
+    Args:
+        item (NewsItem): The news item to evaluate.
+        threshold (float): The score threshold for relevance.
+    Returns:
+        bool: True if the item is relevant, False otherwise.
     """
     score = compute_relevance_score(item)
     relevant = score >= threshold
