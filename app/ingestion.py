@@ -15,32 +15,23 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 
-def load_websites_from_config(config_path: str = "config/feeds.yaml") -> Dict[str, str]:
+def load_config_key(key: str, config_path: str = "config/feeds.yaml", default=None):
+    """
+    Load a specific key from a YAML config file, returning a default if missing.
+    """
+    if default is None:
+        default = {}
     try:
         path = Path(config_path)
         if not path.exists():
             logger.warning(f"Config file {config_path} not found.")
-            return {}
+            return default
         with path.open("r") as f:
             config = yaml.safe_load(f)
-            return config.get("websites", {})
+            return config.get(key, default)
     except Exception as e:
-        logger.error(f"Error loading feed config: {e}")
-        return {}
-
-
-def load_reddit_subreddits_from_config(config_path: str = "config/feeds.yaml") -> list[str]:
-    try:
-        path = Path(config_path)
-        if not path.exists():
-            logger.warning(f"Config file {config_path} not found.")
-            return []
-        with path.open("r") as f:
-            config = yaml.safe_load(f)
-            return config.get("reddit_subreddits", [])
-    except Exception as e:
-        logger.error(f"Error loading subreddit config: {e}")
-        return []
+        logger.error(f"Error loading config key '{key}': {e}")
+        return default
 
 
 def get_env_or_prompt(var_name: str, prompt_msg: str) -> str:
@@ -63,7 +54,7 @@ reddit = praw.Reddit(
 )
 
 
-def fetch_reddit_posts(subreddits: list[str] = None, limit: int = 10) -> List[Dict]:
+def fetch_reddit_posts(subreddits: list[str] | None = None, limit: int = 10) -> List[Dict]:
     """
     Fetch top posts from one or more subreddits.
     Args:
@@ -72,10 +63,9 @@ def fetch_reddit_posts(subreddits: list[str] = None, limit: int = 10) -> List[Di
     Returns:
         List[Dict]: A list of dictionaries containing post details.
     """
+
     if subreddits is None:
-        subreddits = load_reddit_subreddits_from_config()
-        if not subreddits:
-            subreddits = ["netsec"]  # fallback default
+        subreddits = load_config_key("reddit_subreddits", default=[])
 
     posts = []
     try:
@@ -93,16 +83,16 @@ def fetch_reddit_posts(subreddits: list[str] = None, limit: int = 10) -> List[Di
     return posts
 
 
-def fetch_rss_news(limit_per_feed: int = 10, feeds: dict[str, str] | None = None) -> List[Dict]:
+def fetch_website_news(feeds: dict[str, str] | None = None, limit_per_feed: int = 10) -> List[Dict]:
     """
-    Fetch recent entries from multiple RSS feeds. If a feed value is a homepage URL, try to auto-discover the RSS feed.
+    Fetch recent entries from multiple websites. If a feed value is a homepage URL, try to auto-discover the RSS feed.
     Args:
-        limit_per_feed (int): Maximum number of items to fetch from each feed.
         feeds (dict[str, str]): Dictionary of feed names and URLs. If None, loads from config.
+        limit_per_feed (int): Maximum number of items to fetch from each feed.
     Returns:
         List[Dict]: A list of dictionaries containing feed items.
     """
-    feeds = feeds or load_websites_from_config()
+    feeds = feeds or load_config_key("websites", default={})
     items = []
 
     for source_name, url in feeds.items():
@@ -153,5 +143,5 @@ def fetch_all_sources(include_reddit: bool = True, include_rss: bool = True) -> 
     if include_reddit:
         items += fetch_reddit_posts()
     if include_rss:
-        items += fetch_rss_news()
+        items += fetch_website_news()
     return items
