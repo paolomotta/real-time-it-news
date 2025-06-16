@@ -2,7 +2,6 @@ import re
 import logging
 import yaml
 from app.models import NewsItem
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 

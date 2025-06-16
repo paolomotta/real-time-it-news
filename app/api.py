@@ -1,20 +1,22 @@
 import logging
-from fastapi import FastAPI, HTTPException, Request
+
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+
 from apscheduler.schedulers.background import BackgroundScheduler
 
-# Logging configuration
 from app.logging_config import configure_logging
-configure_logging()
-logger = logging.getLogger(__name__)
-
 from app.models import NewsItem
 from app.filtering import is_relevant, compute_relevance_score
 from app.storage import NewsStorage
 from app.ranking import sort_news_items
 from app.ingestion import fetch_all_sources
+
+# Logging configuration
+configure_logging()
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Mock IT Newsfeed API")
 

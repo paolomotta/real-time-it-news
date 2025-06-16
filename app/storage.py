@@ -1,8 +1,8 @@
 import json
-import logging
 from pathlib import Path
 from threading import Lock
 from datetime import datetime, timedelta
+
 from app.models import NewsItem
 
 import logging

@@ -1,12 +1,12 @@
 import os
-from datetime import datetime, timezone
 import logging
-from typing import List, Dict
+from datetime import datetime, timezone
+from pathlib import Path
+
 import feedparser
 import praw
 import yaml
 from dotenv import load_dotenv
-from pathlib import Path
 from feedfinder2 import find_feeds
 
 logger = logging.getLogger(__name__)
@@ -54,7 +54,7 @@ reddit = praw.Reddit(
 )
 
 
-def fetch_reddit_posts(subreddits: list[str] | None = None, limit: int = 10) -> List[Dict]:
+def fetch_reddit_posts(subreddits: list[str] | None = None, limit: int = 10) -> list[dict[str, any]]:
     """
     Fetch top posts from one or more subreddits.
     Args:
@@ -83,7 +83,7 @@ def fetch_reddit_posts(subreddits: list[str] | None = None, limit: int = 10) -> 
     return posts
 
 
-def fetch_website_news(feeds: dict[str, str] | None = None, limit_per_feed: int = 10) -> List[Dict]:
+def fetch_website_news(feeds: dict[str, str] | None = None, limit_per_feed: int = 10) -> list[dict[str, any]]:
     """
     Fetch recent entries from multiple websites. If a feed value is a homepage URL, try to auto-discover the RSS feed.
     Args:
@@ -129,7 +129,7 @@ def fetch_website_news(feeds: dict[str, str] | None = None, limit_per_feed: int 
     return items
 
 
-def fetch_all_sources(include_reddit: bool = True, include_rss: bool = True) -> List[Dict]:
+def fetch_all_sources(include_reddit: bool = True, include_rss: bool = True) -> list[dict[str, any]]:
     """
     Fetch news from all sources and return combined list.
     Args:
