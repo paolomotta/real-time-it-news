@@ -87,10 +87,10 @@ Aggregates and filters cybersecurity and IT-related news from Reddit and public 
       ```
     - Save the file. The application will automatically load these variables at runtime.
 
-6. **Configure the RSS Feeds**
+6. **Configure Subreddits and Websites**
 
-    The application uses a YAML file to specify which RSS feeds to aggregate.
-    Open `config/feeds.yaml` in a text editor and add or modify the RSS feeds you want to include.
+    The application uses a YAML file to specify which Reddit subreddits and websites to read from.
+    Open `config/feeds.yaml` in a text editor and add or modify name of subreddits or website URLs you would like to include or remove.
 
 
 ## Configuration: Relevance Scoring
