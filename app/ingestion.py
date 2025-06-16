@@ -28,7 +28,10 @@ def load_config_key(key: str, config_path: str = "config/feeds.yaml", default=No
             return default
         with path.open("r") as f:
             config = yaml.safe_load(f)
-            return config.get(key, default)
+            value = config.get(key, default) if config else default
+            if value is None:
+                return default
+            return value
     except Exception as e:
         logger.error(f"Error loading config key '{key}': {e}")
         return default
@@ -92,7 +95,9 @@ def fetch_website_news(feeds: dict[str, str] | None = None, limit_per_feed: int 
     Returns:
         List[Dict]: A list of dictionaries containing feed items.
     """
-    feeds = feeds or load_config_key("websites", default={})
+
+    if feeds is None:
+        feeds = load_config_key("websites", default={})
     items = []
 
     for source_name, url in feeds.items():
