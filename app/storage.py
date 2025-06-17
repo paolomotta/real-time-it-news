@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from threading import Lock
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from app.models import NewsItem
 
@@ -10,7 +11,10 @@ logger = logging.getLogger(__name__)
 
 # TODO: In a production environment, I would consider using a database like SQLite or PostgreSQL, now skipped for time limits.
 class NewsStorage:
-    def __init__(self, persistence_file: str = "news_store.json"):
+    def __init__(self, persistence_file: str = ".data/news_store.json"):
+        # Ensure .data directory exists
+        data_dir = Path(persistence_file).parent
+        data_dir.mkdir(parents=True, exist_ok=True)
         self._store: dict[str, NewsItem] = {}
         self._file = Path(persistence_file)
         self._lock = Lock()
