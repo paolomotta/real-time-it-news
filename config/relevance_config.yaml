@@ -10,6 +10,30 @@ keyword_scores:
   patch: 2
   mitigation: 2
   outage: 3
+  downtime: 3
+  incident: 3
+  disruption: 3
+  phishing: 4
+  malware: 4
+  compromise: 4
+  data loss: 4
+  unauthorized access: 4
+  bug: 2
+  regression: 2
+  crash: 3
+  security flaw: 4
+  vulnerability: 3
+  exposed: 3
+  credentials: 3
+  authentication: 2
+  denial of service: 4
+  root cause: 2
+  patch tuesday: 2
+  zero day: 5
+  escalation: 2
+  compliance: 2
+  gdpr: 2
+  fine: 2
 
 pattern_bonuses:
   - pattern: CVE-\d{4}-\d+
@@ -20,6 +44,20 @@ pattern_bonuses:
     bonus: 2
   - pattern: \bexploit\s+released\b
     bonus: 3
+  - pattern: \b(service|system|network)\s+(outage|disruption|downtime)\b
+    bonus: 2
+  - pattern: \bMicrosoft\b.*\boutage\b
+    bonus: 2
+  - pattern: \bAzure\b.*\bdown\b
+    bonus: 2
+  - pattern: \bOffice\s?365\b.*\bunavailable\b
+    bonus: 2
+  - pattern: \bdata\s+breach\b
+    bonus: 2
+  - pattern: \bphishing\s+attack\b
+    bonus: 2
+  - pattern: \bcompliance\s+(issue|breach|fine)\b
+    bonus: 2
 
 source_weights:
   reddit: 1.0

@@ -17,7 +17,7 @@ SOURCE_WEIGHTS = _config["source_weights"]
 THRESHOLD = _config.get("threshold", 2.0)  # Default to 2.0 if not set
 
 def compute_relevance_score(item: NewsItem) -> float:
-    content = f"{item.title} {item.body or ''}".lower()
+    content = f"{item.title}".lower()
     score = 0
 
     keyword_scores = KEYWORD_SCORES if KEYWORD_SCORES is not None else {}
