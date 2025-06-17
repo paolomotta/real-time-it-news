@@ -28,4 +28,4 @@ source_weights:
   mock: 1.0
 
 
-threshold: 2.0
+threshold: 3.0
