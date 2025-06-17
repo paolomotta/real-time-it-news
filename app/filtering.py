@@ -5,66 +5,52 @@ from app.models import NewsItem
 
 logger = logging.getLogger(__name__)
 
-# TODO: Using an LLM for semantic understanding would be ideal
-
-
 def load_relevance_config(config_path="config/relevance_config.yaml"):
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
     return config
 
 _config = load_relevance_config()
-KEYWORD_SCORES = _config["keyword_scores"] # Weighted keywords indicating relevance
-PATTERN_BONUSES = [(entry["pattern"], entry["bonus"]) for entry in _config["pattern_bonuses"]] # Regex patterns for boosting scores based on structure
-SOURCE_WEIGHTS = _config["source_weights"] # Optional: weight based on source reliability
-
+KEYWORD_SCORES = _config["keyword_scores"]
+PATTERN_BONUSES = [(entry["pattern"], entry["bonus"]) for entry in _config["pattern_bonuses"]]
+SOURCE_WEIGHTS = _config["source_weights"]
+THRESHOLD = _config.get("threshold", 2.0)  # Default to 2.0 if not set
 
 def compute_relevance_score(item: NewsItem) -> float:
-    """
-    Calculate a weighted relevance score for a news item based on content and source.
-    The score is based on keyword matches, regex patterns, and source reliability.
-    Args:
-        item (NewsItem): The news item to evaluate.
-    Returns:
-        float: The computed relevance score.
-    """
     content = f"{item.title} {item.body or ''}".lower()
     score = 0
 
-    # Handle missing config gracefully
     keyword_scores = KEYWORD_SCORES if KEYWORD_SCORES is not None else {}
     pattern_bonuses = PATTERN_BONUSES if PATTERN_BONUSES is not None else []
     source_weights = SOURCE_WEIGHTS if SOURCE_WEIGHTS is not None else {}
 
-    # Score keyword matches
     for keyword, weight in keyword_scores.items():
         if keyword in content:
             logger.debug(f"Keyword '{keyword}' matched in item '{item.id}' (+{weight})")
             score += weight
 
-    # Apply bonus points for regex pattern matches
     for pattern, bonus in pattern_bonuses:
         if re.search(pattern, content, flags=re.IGNORECASE):
             logger.debug(f"Pattern '{pattern}' matched in item '{item.id}' (+{bonus})")
             score += bonus
 
-    # Adjust based on source weight
     source_weight = source_weights.get(item.source.lower(), 1.0)
     final_score = score * source_weight
     logger.debug(f"Item '{item.id}' base score: {score}, source weight: {source_weight}, final score: {final_score}")
     return final_score
 
-
-def is_relevant(item: NewsItem, threshold: float = 2.0) -> bool:
+def is_relevant(item: NewsItem, threshold: float = None) -> bool:
     """
     Return True if the item is considered relevant based on a score threshold.
     Args:
         item (NewsItem): The news item to evaluate.
-        threshold (float): The score threshold for relevance.
+        threshold (float, optional): The score threshold for relevance. If None, uses config value.
     Returns:
         bool: True if the item is relevant, False otherwise.
     """
+    if threshold is None:
+        threshold = THRESHOLD
     score = compute_relevance_score(item)
     relevant = score >= threshold
     logger.debug(f"Item '{item.id}' relevance: {score} (threshold: {threshold}) -> {'relevant' if relevant else 'not relevant'}")
-    return score >= threshold
+    return relevant

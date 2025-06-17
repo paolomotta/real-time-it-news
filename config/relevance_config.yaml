@@ -26,3 +26,6 @@ source_weights:
   arstechnica: 1.2
   tomshardware: 1.1
   mock: 1.0
+
+
+threshold: 2.0
