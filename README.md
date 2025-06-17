@@ -149,7 +149,7 @@ docker run -p 8000:8000 --env-file .env it-news-app
 
 Or use **Docker Compose**:
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 The API will be available at http://localhost:8000.
