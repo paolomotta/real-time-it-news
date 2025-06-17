@@ -1,5 +1,3 @@
-import tempfile
-import os
 from datetime import datetime, timedelta, timezone
 from app.models import NewsItem
 from app.storage import NewsStorage
