@@ -34,6 +34,7 @@ keyword_scores:
   compliance: 2
   gdpr: 2
   fine: 2
+  urgent: 3
 
 pattern_bonuses:
   - pattern: CVE-\d{4}-\d+
