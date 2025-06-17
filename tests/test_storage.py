@@ -1,6 +1,6 @@
 import tempfile
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.models import NewsItem
 from app.storage import NewsStorage
 
@@ -9,7 +9,7 @@ def test_news_storage():
         test_path = tf.name
 
     try:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         item1 = NewsItem(id="1", title="First", source="A", published_at=now)
         item2 = NewsItem(id="2", title="Second", source="A", published_at=now - timedelta(minutes=10))
 
@@ -32,7 +32,7 @@ def test_news_storage():
 def test_persistence_across_sessions(tmp_path):
     file = tmp_path / "store.json"
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     item = NewsItem(id="abc", title="Test", source="source", published_at=now)
 
     store1 = NewsStorage(persistence_file=str(file))
@@ -51,7 +51,7 @@ def test_get_by_source_case_insensitive(tmp_path):
     store = NewsStorage(persistence_file=str(tmp_path / "store.json"))
     store.clear()
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     item1 = NewsItem(id="1", title="Item 1", source="TechCrunch", published_at=now)
     item2 = NewsItem(id="2", title="Item 2", source="techcrunch", published_at=now)
 
@@ -67,7 +67,7 @@ def test_get_since_filters_old_items(tmp_path):
     store = NewsStorage(persistence_file=str(tmp_path / "store.json"))
     store.clear()
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     old_item = NewsItem(id="old", title="Old", source="src", published_at=now - timedelta(minutes=61))
     new_item = NewsItem(id="new", title="New", source="src", published_at=now)
 
@@ -83,7 +83,7 @@ def test_add_many_skips_duplicates(tmp_path):
     store = NewsStorage(persistence_file=str(tmp_path / "store.json"))
     store.clear()
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     item = NewsItem(id="dup", title="Same", source="src", published_at=now)
 
     store.add_many([item, item])

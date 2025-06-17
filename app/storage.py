@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from threading import Lock
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app.models import NewsItem
 
@@ -46,7 +46,7 @@ class NewsStorage:
             return [item for item in self._store.values() if item.source.lower() == source.lower()]
 
     def get_since(self, minutes_ago: int) -> list[NewsItem]:
-        cutoff = datetime.utcnow() - timedelta(minutes=minutes_ago)
+        cutoff = datetime.now(timezone.utc) - timedelta(minutes=minutes_ago)
         with self._lock:
             return [item for item in self._store.values() if item.published_at >= cutoff]
 

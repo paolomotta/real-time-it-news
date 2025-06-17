@@ -1,7 +1,7 @@
 import pytest
 from app.filtering import compute_relevance_score, is_relevant
 from app.models import NewsItem
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Sample news items
 @pytest.fixture
@@ -11,7 +11,7 @@ def high_relevance_item():
         title="Critical zero-day vulnerability in Microsoft Exchange exploited",
         body="Attackers released an exploit. CVE-2025-12345 issued. Patch now.",
         source="arstechnica",
-        published_at=datetime.utcnow()
+        published_at=datetime.now(timezone.utc)
     )
 
 @pytest.fixture
@@ -21,7 +21,7 @@ def low_relevance_item():
         title="Company updates terms of service",
         body="The new TOS will be effective starting August 1.",
         source="reddit",
-        published_at=datetime.utcnow()
+        published_at=datetime.now(timezone.utc)
     )
 
 # === TEST: compute_relevance_score ===
