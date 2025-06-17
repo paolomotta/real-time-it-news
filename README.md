@@ -128,6 +128,8 @@ threshold: 2.0 # Threshold to consider a news relevant or not
 
 You can start the application **either from the command line** (locally) **or using Docker**.
 
+> **Note:** <span style="color:red">The application will start fetching news after the first minute. Please wait at least 60 seconds to see the first updates from Reddit and websites.</span>
+
 
 ### 🖥️ Option 1: Run Locally
 
