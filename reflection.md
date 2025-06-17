@@ -31,10 +31,10 @@ To ensure that only news items relevant to IT managers are surfaced (e.g., outag
 **Approach:**
 
 - **Keyword Scoring:**  
-  Each news item is scored based on the presence of weighted keywords (e.g., "ransomware", "breach", "outage") in its title and body. The weights are defined in [`config/relevance_config.yaml`](config/relevance_config.yaml), allowing easy adjustment and extension.
+  Each news item is scored based on the presence of weighted keywords (e.g., "ransomware", "breach", "outage") in its title. The weights are defined in [`config/relevance_config.yaml`](config/relevance_config.yaml), allowing easy adjustment and extension.
 
 - **Pattern Bonuses:**  
-  Additional points are awarded if the news item matches certain regular expression patterns (e.g., CVE identifiers, phrases like "exploit released"). This helps capture structured signals of high relevance that may not be covered by simple keywords.
+  Additional points are awarded if the news item title matches certain regular expression patterns (e.g., CVE identifiers, phrases like "exploit released"). This helps capture structured signals of high relevance that may not be covered by simple keywords.
 
 - **Source Weighting:**  
   Each source (e.g., Reddit, Ars Technica) can be assigned a reliability weight, so items from more trusted or relevant sources are scored higher.
@@ -49,6 +49,8 @@ This rule-based approach is transparent, auditable, and highly configurable. It 
 **Reflection and Alternatives:**
 
 Initially, I experimented with a language model (LLM)-based approach for semantic filtering. However, despite prompt engineering, I encountered too many false positives and false negatives. With more time, it might have been possible to identify or fine-tune a model better suited to this specific domain. For this assignment, I reverted to the rule-based solution for its stability, transparency, and ease of control. In the future, a hybrid or fine-tuned LLM-based filter could further improve relevance detection, as discussed in the "Future Work" section.
+
+Additionally, during experimentation, I observed that including the news body in the keyword matching introduced a bias toward longer articles, as they had a higher chance of containing the target keywords, which is leading then to an increasing cumulative score. To mitigate this, I chose to limit the filtering to the title only. While this decision is debatable, it proved to be the most consistent and reliable configuration within the constraints of a rule-based system.
 
 
 ### **3. User Interface**
@@ -165,7 +167,8 @@ The current keyword-matching approach, while simple and fast, has several notabl
 
 - It requires manual identification of all potentially relevant keywords, which is both time-consuming and error-prone.
 - It struggles with false positives and false negatives due to its lack of semantic understanding.
-- It tends to favor longer texts, as the likelihood of matching keywords increases with length, leading to a bias in relevance scoring.
+
+The current solution focuses exclusively on the title of each news item, which is admittedly a limitation. During testing, I observed that including the body of the news tended to bias the relevance scoring in favor of longer articles, simply because they had a higher probability of containing matching keywords. This skewed the filtering process and reduced its reliability. Ideally, I would have explored more sophisticated techniques to address this issue, but time constraints prevented a deeper investigation.
 
 To overcome these limitations, future versions of the system could incorporate more advanced NLP techniques:
 

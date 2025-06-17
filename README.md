@@ -101,7 +101,7 @@ The filtering logic is governed by a YAML file located at `config/relevance_conf
 - **Regex patterns**: Structural patterns with additional weight
 - **Source weights**: How trustworthy/relevant a source is considered
 
-This allows you to adjust filtering behavior without modifying the code.
+This allows you to adjust filtering behavior without modifying the code. The keyword matching is based on the title and not on the content of the news.
 
 Example:
 
