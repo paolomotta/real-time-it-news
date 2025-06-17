@@ -159,19 +159,23 @@ Currently, the `ingestion.py` script fetches news from RSS feeds and Reddit subr
 **Asynchronous fetching** would allow the script to initiate multiple network requests concurrently, significantly reducing the total time required to gather news from all sources. For example, using Python's `asyncio` library along with asynchronous HTTP clients (such as `aiohttp` for RSS feeds and `asyncpraw` for Reddit), the script could fetch from many feeds and subreddits at the same time. This would make the ingestion process much faster and more scalable, especially when aggregating from dozens of sources.
 
 
-### LLM-Based Filtering
+### LLM-Based and Embedding-Based Filtering
 
 The current keyword-matching approach, while simple and fast, has several notable limitations:
 
 - It requires manual identification of all potentially relevant keywords, which is both time-consuming and error-prone.
-
 - It struggles with false positives and false negatives due to its lack of semantic understanding.
-
 - It tends to favor longer texts, as the likelihood of matching keywords increases with length, leading to a bias in relevance scoring.
 
-To overcome these limitations, a future version of the system could incorporate a large language model (LLM), such as GPT-4, to classify the relevance of news items based on their semantic content. This would enable the detection of subtle or implied security threats that keyword-based filters might miss.
+To overcome these limitations, future versions of the system could incorporate more advanced NLP techniques:
 
-For reliable testing and reproducibility, the LLM should operate under fixed conditions—such as a consistent prompt, zero temperature, and a locked model version—and return binary relevance decisions. Alternatively, a hybrid approach could be explored, combining the LLM with traditional NLP techniques like embeddings and cosine similarity to enhance semantic filtering without fully relying on a generative model.
+- **LLM-Based Filtering:**  
+  A large language model (LLM), such as GPT-4, could be used to classify the relevance of news items based on their semantic content. This would enable the detection of subtle or implied security threats that keyword-based filters might miss. For reliable testing and reproducibility, the LLM should operate under fixed conditions—such as a consistent prompt, zero temperature, and a locked model version—and return binary relevance decisions.
+
+- **Embedding and Transformer-Based Filtering:**  
+  Alternatively, or in combination with LLMs, transformer models (such as BERT or Sentence Transformers) could be used to generate vector embeddings of news items. These embeddings can be compared to vectors representing relevant topics or example incidents using cosine similarity, enabling semantic filtering without relying solely on generative models. This approach can capture nuanced relationships and improve recall and precision over simple keyword matching.
+
+A hybrid approach—combining LLM-based classification, embeddings, and traditional rule-based methods—could further enhance the accuracy and robustness of relevance detection, while maintaining transparency and control.
 
 ### Database Storage
 
