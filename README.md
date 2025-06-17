@@ -119,6 +119,9 @@ source_weights:
   reddit: 1.0
   arstechnica: 1.2
   mock: 1.0
+
+threshold: 2.0 # Threshold to consider a news relevant or not
+
 ```
 
 ## 🏁 Running the Application
